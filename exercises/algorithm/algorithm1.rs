@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -14,7 +13,7 @@ struct Node<T> {
     next: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Node<T> {
+impl<T: Ord + Clone> Node<T> {
     fn new(t: T) -> Node<T> {
         Node {
             val: t,
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Ord + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: Ord + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -69,14 +68,35 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a: LinkedList<T>, mut list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut mergelist = LinkedList::<T>::new();
+		let (mut index_a, mut index_b) = (0 as i32, 0 as i32);
+        while index_a < list_a.length as i32 && index_b < list_b.length as i32 {
+            if let (Some(val_a), Some(val_b)) = (list_a.get(index_a), list_b.get(index_b)){
+                if val_a <= val_b {
+                    mergelist.add(val_a.clone());
+                    index_a += 1;
+                }
+                else{
+                    mergelist.add(val_b.clone());
+                    index_b += 1;
+                }
+            }
         }
+        while index_a < list_a.length as i32 {
+            if let Some(val) = list_a.get(index_a){
+                mergelist.add(val.clone());
+                index_a += 1;
+            }
+        }
+        while index_b < list_b.length as i32 {
+            if let Some(val) = list_b.get(index_b){
+                mergelist.add(val.clone());
+                index_b += 1;
+            }
+        }
+		mergelist
 	}
 }
 
